@@ -9,19 +9,26 @@ BUILD_DIR = build
 
 # Files
 TEST_SRC = $(TEST_DIR)/tensor_test.cpp
-TARGET = $(BUILD_DIR)/run_tests
+
+# Targets
+TEST_TARGET = $(BUILD_DIR)/run_tests
 
 # build and run
-all: $(TARGET)
-	./$(TARGET)
+all: test
+
+test: $(TEST_TARGET)
+	./$(TEST_TARGET)
 
 # create build directory and compile test
-$(TARGET): $(TEST_SRC)
+$(TEST_TARGET): $(TEST_SRC)
 	@mkdir -p $(BUILD_DIR)
-	$(CXX) $(CXXFLAGS) $(TEST_SRC) -o $(TARGET)
+	@$(CXX) $(CXXFLAGS) $(TEST_SRC) -o $(TEST_TARGET)
+
+run:
+	@echo "No main application yet.
 
 # clean up build files
 clean:
-	rm -rf $(BUILD_DIR)
+	@rm -rf $(BUILD_DIR)
 
-.PHONY: all clean
+.PHONY: all test run clean
