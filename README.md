@@ -1,6 +1,6 @@
 # InferLite
 
-![C++ CI](https://github.com/YOUR_USERNAME/YOUR_REPO_NAME/actions/workflows/cpp-tests.yml/badge.svg)
+![C++ CI](https://github.com/brandonviaje/InferLite/actions/workflows/cpp-tests.yml/badge.svg)
 
 lightweight inference engine for executing trained neural network models efficiently
 
@@ -18,4 +18,5 @@ should prioritize:
 - throughput
 - latency
 - concurrency
+
 
