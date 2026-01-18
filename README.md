@@ -9,3 +9,9 @@ by the end of this project my inference engine should:
 - Construct a graph representation of the model
 - Topologically sort nodes
 - Run inference with user inputs
+
+
+should prioritize:
+- throughput
+- latency
+- concurrency
