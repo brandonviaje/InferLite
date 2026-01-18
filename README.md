@@ -1,4 +1,7 @@
 # InferLite
+
+![C++ CI](https://github.com/brandonviaje/InferLite/actions/workflows/cpp-tests.yml/badge.svg)
+
 lightweight inference engine for executing trained neural network models efficiently
 
 goal: learn the infrastructure behind graph optimization, kernel fusion and all under the hood features of an inference engine.
@@ -15,3 +18,5 @@ should prioritize:
 - throughput
 - latency
 - concurrency
+
+
