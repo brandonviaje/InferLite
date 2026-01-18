@@ -1,34 +1,44 @@
 # Compiler and Flags
 CXX = g++
 CXXFLAGS = -std=c++17 -Wall -Wextra -Isrc
+LDFLAGS = -lprotobuf  
 
 # Directories
 SRC_DIR = src
 TEST_DIR = test
 BUILD_DIR = build
 
-# Files
-TEST_SRC = $(TEST_DIR)/tensor_test.cpp
+# Source Files
+PROTO_SRC = $(SRC_DIR)/onnx-ml.pb.cc
+
+$(SRC_DIR)/onnx-ml.pb.cc: proto/onnx-ml.proto
+	@echo "Generating Protobuf files..."
+	protoc --proto_path=proto --cpp_out=$(SRC_DIR) $<
 
 # Targets
-TEST_TARGET = $(BUILD_DIR)/run_tests
+TENSOR_TEST_EXE = $(BUILD_DIR)/run_tensor_tests
+MODEL_TEST_EXE  = $(BUILD_DIR)/run_model_tests
 
-# build and run
 all: test
 
-test: $(TEST_TARGET)
-	./$(TEST_TARGET)
+# Run both test suites
+test: $(TENSOR_TEST_EXE) $(MODEL_TEST_EXE)
+	@echo "--- Running Tensor Tests ---"
+	@./$(TENSOR_TEST_EXE)
+	@echo "\n--- Running Model Tests ---"
+	@./$(MODEL_TEST_EXE)
 
-# create build directory and compile test
-$(TEST_TARGET): $(TEST_SRC)
+# Build and Compile Tests 
+$(TENSOR_TEST_EXE): $(TEST_DIR)/tensor_test.cpp
 	@mkdir -p $(BUILD_DIR)
-	@$(CXX) $(CXXFLAGS) $(TEST_SRC) -o $(TEST_TARGET)
+	@$(CXX) $(CXXFLAGS) $< -o $@
 
-run:
-	@echo "No main application yet.
+$(MODEL_TEST_EXE): $(TEST_DIR)/model_test.cpp $(PROTO_SRC)
+	@mkdir -p $(BUILD_DIR)
+	@$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
 
-# clean up build files
+# Clean
 clean:
 	@rm -rf $(BUILD_DIR)
 
-.PHONY: all test run clean
+.PHONY: all test clean
