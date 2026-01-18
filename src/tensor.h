@@ -26,7 +26,7 @@ public:
     }
 
     // copy constructor
-    Tensor(const Tensor &other) : _shape(other.shape), size_(other.size_)
+    Tensor(const Tensor &other) : shape_(other.shape_), size_(other.size_)
     {
         data_ = new T[size_];
         std::copy(other.data_, other.data_ + size_, data_);
@@ -39,15 +39,15 @@ public:
         other.size_ = 0;
     }
 
-    // copy-assignment constructor
+    // copy-assignment operator
     Tensor &operator=(const Tensor &other)
     {
 
         // self-assignment check
         if (this != &other)
         {
-            // clean existing  mem
-            delete[] data;
+            // clean existing memory
+            delete[] data_;
 
             // copy metadata
             shape_ = other.shape_;
@@ -60,7 +60,7 @@ public:
         return *this;
     }
 
-    // move-assignment constructor
+    // move-assignment operator
     Tensor &operator=(Tensor &&other) noexcept
     {
         // self-assignment check
