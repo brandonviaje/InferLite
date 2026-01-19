@@ -50,11 +50,11 @@ int main()
         test_copy_assignment();
         test_move_semantics();
         test_dimensions();
-        std::cout << "\nALL TESTS PASSED!" << std::endl;
+        std::cout << "TENSOR TESTS PASSED!" << std::endl;
     }
     catch (const std::exception &e)
     {
-        std::cerr << "Test failed: " << e.what() << std::endl;
+        std::cerr << "Tensor Test failed: " << e.what() << std::endl;
         return 1;
     }
     return 0;
