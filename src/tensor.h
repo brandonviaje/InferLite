@@ -11,6 +11,8 @@ class Tensor
 {
 public:
     // constructors
+    Tensor() : data_(nullptr), size_(0) {}
+
     Tensor(const std::vector<size_t> &shape) : shape_(shape)
     {
         size_ = 1;
