@@ -84,9 +84,52 @@ public:
     // getters
     std::size_t size() const { return size_; }
     const std::vector<std::size_t> &shape() const { return shape_; }
+
+    T *data() { return data_; }
+    const T *data() const { return data_; }
+
     T &operator[](std::size_t index) { return data_[index]; }
-    std::size_t rows() const { return shape_.empty() ? 0 : shape_[0]; }
-    std::size_t cols() const { return shape_.size() < 2 ? 1 : shape_[1]; }
+    const T &operator[](std::size_t index) const { return data_[index]; }
+
+    std::size_t rows() const
+    {
+        return shape_.empty() ? 0 : shape_[0];
+    }
+
+    std::size_t cols() const
+    {
+        return shape_.size() < 2 ? 1 : shape_[1];
+    }
+
+    // multi-dimension getter
+    T &at(const std::vector<std::size_t> &indices)
+    {
+        if (indices.size() != shape_.size())
+        {
+            throw std::invalid_argument("Dimension mismatch");
+        }
+
+        std::size_t offset = 0;
+        std::size_t stride = 1;
+
+        // iterate backwards through dimensions to calculate row-major offset
+        for (long long i = shape_.size() - 1; i >= 0; --i)
+        {
+            if (indices[i] >= shape_[i])
+            {
+                throw std::out_of_range("Index out of bounds");
+            }
+            offset += indices[i] * stride;
+            stride *= shape_[i];
+        }
+        return data_[offset];
+    }
+
+    // read values from at func
+    const T &at(const std::vector<std::size_t> &indices) const
+    {
+        return const_cast<Tensor *>(this)->at(indices);
+    }
 
 private:
     T *data_;
