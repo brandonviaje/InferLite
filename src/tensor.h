@@ -103,6 +103,26 @@ public:
         return shape_.size() < 2 ? 1 : shape_[1];
     }
 
+    void reshape(const std::vector<std::size_t>& new_shape) {
+        // get total size of new shape
+        std::size_t new_total_size{1};
+        
+        for (auto dim : new_shape) 
+        {
+            new_total_size *= dim;
+        }
+
+        // check if total elements match
+        if (new_total_size != size_) 
+        {
+            throw std::invalid_argument("Reshape error: Total element count must not change.");
+        }
+
+        // update shape
+        shape_ = new_shape;
+    }
+
+
     // multi-dimension getter
     T &at(const std::vector<std::size_t> &indices)
     {
