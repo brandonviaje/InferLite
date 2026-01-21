@@ -6,7 +6,7 @@
 class FlattenOperator : public Operator 
 {
 public:
-    void compute(const Node& node, const std::vector<Tensor<float>*>& inputs, Tensor<float>& output) override 
+    void compute([[maybe_unused]]const Node& node, const std::vector<Tensor<float>*>& inputs, Tensor<float>& output) override 
     {
         
         // get input
