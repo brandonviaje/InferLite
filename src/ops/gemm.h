@@ -38,14 +38,14 @@ public:
         float* y_ptr = output.data();
 
         // GEMM 
-        for (size_t m = 0; m < M; ++m) 
+        for (std::size_t m {}; m < M; ++m) 
         {
-            for (size_t n = 0; n < N; ++n) 
+            for (std::size_t n {}; n < N; ++n) 
             {
 
                 float sum = 0.0f;
 
-                for (size_t k = 0; k < K; ++k) 
+                for (std::size_t k {}; k < K; ++k) 
                 {
                     // logical transpose matrix
                     std::size_t a_width {A->shape()[1]};
