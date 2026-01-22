@@ -85,7 +85,7 @@ int main() {
         test_node_attributes();
         std::cout << "\nNODE TESTS PASSED!\n";
     } catch (const std::exception& e) {
-        std::cerr << "Test Failed with Exception: " << e.what() << "\n";
+        std::cerr << "Node Test failed: " << e.what() << "\n";
         return 1;
     }
     return 0;
