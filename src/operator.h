@@ -6,13 +6,12 @@
 #include "tensor.h"
 #include "node.h"
 
-class Operator {
+class Operator 
+{
 public:
-    // virtual destructor
-    virtual ~Operator() = default;
-
-    // execute operator
-    virtual void compute(const Node& node, const std::vector<Tensor<float>*>& inputs, Tensor<float>& output) = 0;
+    virtual ~Operator() = default;                                                                                // virtual destructor
+    virtual void set_attributes(const Node& node) { (void)node; }                                                 // load settings
+    virtual void forward(const std::vector<Tensor<float>*>& inputs, std::vector<Tensor<float>*>& outputs) = 0; // execute operator
 };
 
 #endif
