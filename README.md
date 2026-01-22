@@ -51,12 +51,13 @@ A **Machine Learning Inference Server** is a specialized server that hosts train
 <img width="1000" height="700" alt="Inference Server" src="https://github.com/user-attachments/assets/50655ea3-88e2-40e3-b19d-f4f8e3b80f8a" />
 
 # Acknowledgements
-
+- [Matrix Mul Optimization](https://en.algorithmica.org/hpc/algorithms/matmul/)
 - [ONNX Operators Documentation](https://onnx.ai/onnx/operators/index.html)
 - [What is an Inference Server](https://www.doubleword.ai/resources/what-is-an-inference-server-10-characteristics-of-an-effective-inference-server-for-generative-ai-deployments)
 - [Build Your Own Inference Engine](https://michalpitr.substack.com/p/build-your-own-inference-engine-from)
 - [Understanding Inference Engine](https://www.gmicloud.ai/glossary/inference-engine)
 
 **Inspired by the ONNX Runtime framework and motivated by Michal Pitr (goat).**
+
 
 
