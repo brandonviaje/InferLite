@@ -8,23 +8,20 @@ class ReluOperator : public Operator
 public:
     void forward(const std::vector<Tensor<float>*>& inputs, std::vector<Tensor<float>*>& outputs) override
     {
-        const Tensor<float>* X = inputs[0];
+        const Tensor<float>* input = inputs[0]; // input tensor
+        Tensor<float>* output = outputs[0];     // get existing output tensor 
+        output->resize(input->shape());         // resize tensor to match input
 
-        // prepare output
-        Tensor<float>* Y = new Tensor<float>(X->shape());
-        outputs.push_back(Y);
+        // pointers
+        const float* in_data = input->data();
+        float* out_data = output->data();
+        std::size_t size = input->size();
 
-        // ptrs to data
-        const float* x_ptr = X->data();
-        float* y_ptr       = Y->data();
-        std::size_t size   = X->size();
-
-        // apply relu element-wise
-        
-        for (std::size_t i{}; i < size; ++i) 
+        // apply ReLU element wise
+        for (std::size_t i = 0; i < size; ++i) 
         {
-            float val = x_ptr[i];
-            y_ptr[i] = (val > 0.0f) ? val : 0.0f; // f(x) = max(0, x)
+            float val = in_data[i];
+            out_data[i] = (val > 0.0f) ? val : 0.0f; // f(x) = max(0,x)
         }
     }
 };

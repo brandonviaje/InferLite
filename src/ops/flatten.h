@@ -11,36 +11,24 @@ public:
         // ONNX Default is axis=1 
         axis_ = node.get_attribute<int64_t>("axis").value_or(1);
     }
-
-    void forward(const std::vector<Tensor<float>*>& inputs, std::vector<Tensor<float>*>& outputs) override 
+    
+    void forward(const std::vector<Tensor<float>*>& inputs, std::vector<Tensor<float>*>& outputs) override
     {
-        const Tensor<float>* X = inputs[0];
+        const Tensor<float>* input = inputs[0];
+        Tensor<float>* output = outputs[0];
+        const std::vector<std::size_t>& shape = input->shape();
 
-        // calculate new shape
+        int axis = static_cast<int>(axis_);
+        if (axis < 0) axis += shape.size();
 
-        // handle negative axes (-1 means last dim)
-        int64_t rank = static_cast<int64_t>(X->shape().size());
-        int64_t axis = axis_;
-        if (axis < 0) axis += rank;
+        std::size_t batch = 1;
+        for (int i = 0; i < axis; ++i) batch *= shape[i];
 
-        // clamp just in case
-        if (axis < 0) axis = 0;
-        if (axis > rank) axis = rank;
+        std::size_t features = 1;
+        for (size_t i = axis; i < shape.size(); ++i) features *= shape[i];
 
-        // dim 1: product of all dims BEFORE axis
-        std::size_t dim_0 = 1;
-        for (int64_t i = 0; i < axis; ++i) {
-            dim_0 *= X->shape()[i];
-        }
-
-        // dim 2: product of all dims AFTER axis
-        std::size_t dim_1 = X->size() / dim_0;     // shortcut: total size / dim_0
-
-        // prepare output
-        Tensor<float>* Y = new Tensor<float>(*X);  // copy data
-        Y->reshape({dim_0, dim_1});                // reshape output tensor
-        
-        outputs.push_back(Y);
+        output->resize({batch, features});
+        std::copy(input->data(), input->data() + input->size(), output->data());
     }
 
 private:
