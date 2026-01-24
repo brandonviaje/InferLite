@@ -104,7 +104,8 @@ public:
         return shape_.size() < 2 ? 1 : shape_[1];
     }
 
-    void reshape(const std::vector<std::size_t>& new_shape) {
+    void reshape(const std::vector<std::size_t>& new_shape) 
+    {
         // get total size of new shape
         std::size_t new_total_size{1};
         
@@ -123,6 +124,25 @@ public:
         shape_ = new_shape;
     }
 
+    // resize tensor
+    void resize(const std::vector<std::size_t>& new_shape) 
+    {
+        std::size_t new_total_size = 1;
+        for (auto dim : new_shape) 
+        {
+            new_total_size *= dim;
+        }
+
+        // reallocate if size changes
+        if (new_total_size != size_) 
+        {
+            delete[] data_;
+            data_ = new T[new_total_size];
+            size_ = new_total_size;
+        }
+
+        shape_ = new_shape;
+    }
 
     // multi-dimension getter
     T &at(const std::vector<std::size_t> &indices)
