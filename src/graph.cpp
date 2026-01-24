@@ -200,6 +200,38 @@ std::vector<Node*> Graph::topological_sort()
     return sorted_nodes_;
 }
 
+// check if initializer with the given name exists in graph
+bool Graph::has_initializer(const std::string& name) const 
+{
+    return initializers_.find(name) != initializers_.end();
+}
+
+// get ptr to the initializer tensor by name
+Tensor<float>* Graph::get_initializer(const std::string& name) const 
+{
+    if (!has_initializer(name)) return nullptr;
+    return initializers_.at(name).get();
+}
+
+// add a new initializer tensor to the graph
+void Graph::add_initializer(const std::string& name, Tensor<float>* tensor) 
+{
+    initializers_[name] = std::unique_ptr<Tensor<float>>(tensor);
+}
+
+// add graph input by name
+void Graph::add_input(const std::string& name) 
+{
+    inputs_.push_back(name);
+}
+
+// add graph output by name.
+void Graph::add_output(const std::string& name) 
+{
+    outputs_.push_back(name);
+}
+
+
 // check if node consumes any graph-level input
 bool Graph::is_input_node(Node* node) const
 {

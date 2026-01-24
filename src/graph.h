@@ -30,7 +30,13 @@ public:
     void add_node(std::unique_ptr<Node> node);
     void replace_node(Node* old_node, std::unique_ptr<Node> new_node);
     std::vector<Node*> topological_sort();
-
+    bool has_initializer(const std::string& name) const ;
+    Tensor<float>* get_initializer(const std::string& name) const;
+    void add_initializer(const std::string& name, Tensor<float>* tensor);
+    void add_input(const std::string& name);
+    void add_output(const std::string& name);
+    std::size_t get_input_size() const { return inputs_.size(); }
+    std::size_t get_output_size() const { return outputs_.size(); }
 private:
     void update_edges(Node* node);
     void add_incoming_edges(Node* node);
