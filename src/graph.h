@@ -6,6 +6,11 @@
 #include <vector>
 #include <unordered_map>
 #include <memory>
+#include <unordered_set>
+#include <iostream>
+#include <algorithm>
+#include <cmath>
+#include <cstring>
 
 #include "tensor.h"
 #include "node.h"
@@ -37,6 +42,9 @@ public:
     void add_output(const std::string& name);
     std::size_t get_input_size() const { return inputs_.size(); }
     std::size_t get_output_size() const { return outputs_.size(); }
+    int get_input_height() const { return input_height_; }
+    int get_input_width() const { return input_width_; }
+    void infer_input_size();
 private:
     void update_edges(Node* node);
     void add_incoming_edges(Node* node);
@@ -48,6 +56,8 @@ private:
     std::unordered_map<std::string, NodeInfo> node_map_;
     std::vector<Node*> sorted_nodes_;
     std::unordered_map<std::string, std::unique_ptr<Tensor<float>>> initializers_;
+    int input_height_ {};
+    int input_width_ {};
 };
 
 #endif

@@ -1,31 +1,17 @@
 #include "graph.h"
-#include <iostream>
-#include <algorithm>
-#include <unordered_map>
-#include <unordered_set>
 
 // constructor 
-Graph::Graph(const onnx::GraphProto& graph_proto)
+Graph::Graph(const onnx::GraphProto& graph_proto) : input_height_(0), input_width_(0)
 {
-    // store input names
-    inputs_.reserve(graph_proto.input_size());
-    for (const auto& in : graph_proto.input())
-        inputs_.push_back(in.name());
-
-    // store output names
-    outputs_.reserve(graph_proto.output_size());
-    for (const auto& out : graph_proto.output())
-        outputs_.push_back(out.name());
-
     // load weights into nodes
     for (const auto& tensor_proto : graph_proto.initializer())
     {
-        std::vector<size_t> shape;
+        std::vector<std::size_t> shape;
         for (auto dim : tensor_proto.dims()) shape.push_back(dim);
 
         auto tensor = std::make_unique<Tensor<float>>(shape);
 
-        // load data ( onnx uses raw bytes or float list)
+        // load raw bytes or float list
         if (tensor_proto.has_raw_data()) 
         {
             const std::string& raw = tensor_proto.raw_data();
@@ -39,19 +25,27 @@ Graph::Graph(const onnx::GraphProto& graph_proto)
         initializers_[tensor_proto.name()] = std::move(tensor);
     }
 
+    // store input names
+    inputs_.reserve(graph_proto.input_size());
+    for (const auto& in : graph_proto.input()) inputs_.push_back(in.name());
+
+    // store output  names
+    outputs_.reserve(graph_proto.output_size());
+    for (const auto& out : graph_proto.output()) outputs_.push_back(out.name());
+
     // map tensor name -> node that produces it
     std::unordered_map<std::string, Node*> tensor_to_producer;
 
     // create nodes and register outputs
     node_map_.reserve(graph_proto.node_size());
-    for (const auto& node_proto : graph_proto.node())
+    for (const auto& node_proto : graph_proto.node()) 
     {
         auto node = std::make_unique<Node>(node_proto);
         Node* node_ptr = node.get();
         std::string name = node->get_name();
 
         // handle nodes without a name
-        if (name.empty())
+        if (name.empty()) 
             name = "node_" + std::to_string(node_map_.size());
 
         // register each output tensor
@@ -65,16 +59,15 @@ Graph::Graph(const onnx::GraphProto& graph_proto)
     }
 
     // connect edges based on input/output tensors
-    for (auto& [name, info] : node_map_)
+    for (auto& [name, info] : node_map_) 
     {
         Node* current_node = info.node.get();
-
-        for (const auto& input_name : current_node->get_inputs())
+        for (const auto& input_name : current_node->get_inputs()) 
         {
-            if (tensor_to_producer.count(input_name))
+            if (tensor_to_producer.count(input_name)) 
             {
                 Node* parent = tensor_to_producer[input_name];
-
+                
                 // link parent -> child
                 node_map_[parent->get_name()].children.push_back(current_node);
 
@@ -278,5 +271,46 @@ void Graph::print_graph() const
                 std::cout << child->get_name() << " ";
         }
         std::cout << "\n";
+    }
+}
+
+void Graph::infer_input_size()
+{
+    // if dimensions already set, return 
+    if (this->input_width_ > 0 && this->input_height_ > 0) return;
+
+    // scan all weights
+    bool found = false;
+
+    for (const auto& [name, tensor] : initializers_) 
+    {
+        for (size_t dim : tensor->shape()) 
+        {
+            // filter out small dims
+            if (dim < 196) continue; 
+
+            // calculate square root
+            int side = static_cast<int>(std::sqrt(dim));
+
+            // check if perfect square
+            if (side * side == (long long)dim) 
+            {
+                this->input_width_ = side;
+                this->input_height_ = side;
+                
+                std::cout << "Inferred " << side << "x" << side << " input from weight '" << name << "' (dim=" << dim << ")\n";
+                
+                found = true;
+                break; 
+            }
+        }
+        if (found) break; 
+    }
+
+    if (!found) 
+    {
+        std::cerr << "WARNING: Could not infer input size. Defaulting to 28x28.\n";
+        this->input_width_ = 28;
+        this->input_height_ = 28;
     }
 }
